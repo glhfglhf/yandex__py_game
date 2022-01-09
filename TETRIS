@@ -1,7 +1,5 @@
 import pygame, sys, random 
-from time import sleep 
 from pygame.locals import *  
-from copy import deepcopy
 
 
 colors = [
