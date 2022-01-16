@@ -29,6 +29,8 @@ class Window(QWidget):
         self.pushButton_3.clicked.connect(self.start)
         self.pushButton_4.clicked.connect(self.start)
         self.horizontalSlider.valueChanged.connect(self.sound)
+        global sound_value
+        sound_value = int(self.horizontalSlider.value())
 
     # sound menu settings
     def sound(self):
@@ -68,7 +70,7 @@ class Window(QWidget):
 
 
 # global game settings
-sound_value = 0
+sound_value = 1
 col_num_1 = 0
 col_num_2 = 0
 fon_number = ''
@@ -138,7 +140,6 @@ def pong(send):
             d_x = -d_x
         sound_collision.play()
         return d_x, d_y
-    sound_value = sound_value / 100
     # set mode
     if send == '1 на 1':
         level = 11
@@ -201,17 +202,17 @@ def pong(send):
     sound_collision_wall = pygame.mixer.Sound("collision_wall.wav")
     start_sound = pygame.mixer.Sound('start.wav')
     pygame.mixer.music.load("fon.mp3")
-    sound_win.set_volume(sound_value)
-    start_sound.set_volume(sound_value)
-    sound_collision_wall.set_volume(sound_value)
-    sound_collision.set_volume(sound_value)
-    sound_loose.set_volume(sound_value)
-    sound_not_win.set_volume(sound_value)
+    sound_win.set_volume(sound_value / 100)
+    start_sound.set_volume(sound_value / 100)
+    sound_collision_wall.set_volume(sound_value / 100)
+    sound_collision.set_volume(sound_value / 100)
+    sound_loose.set_volume(sound_value / 100)
+    sound_not_win.set_volume(sound_value / 100)
     running = True
     pygame.mixer.music.play(-1)
     # application name
     pygame.display.set_caption('Pong')
-    pygame.mixer.music.set_volume(sound_value)
+    pygame.mixer.music.set_volume(sound_value / 100)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -389,6 +390,7 @@ def pong(send):
             text_rect_obj = text_surface_obj.get_rect()
             text_rect_obj.center = (660, 780)
             sc.blit(text_surface_obj, text_rect_obj)
+        print(sound_value)
         pygame.display.flip()
         clock.tick(fps)
 
