@@ -390,7 +390,6 @@ def pong(send):
             text_rect_obj = text_surface_obj.get_rect()
             text_rect_obj.center = (660, 780)
             sc.blit(text_surface_obj, text_rect_obj)
-        print(sound_value)
         pygame.display.flip()
         clock.tick(fps)
 
