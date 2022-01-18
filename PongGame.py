@@ -140,6 +140,50 @@ def pong(send):
             d_x = -d_x
         sound_collision.play()
         return d_x, d_y
+
+    # add picture for anim
+    def load_image():
+        image = pygame.image.load('star.png')
+        return image
+
+    # anim
+    class Particle(pygame.sprite.Sprite):
+        # сгенерируем частицы разного размера
+        fire = [load_image()]
+        for scale in (5, 10, 20):
+            fire.append(pygame.transform.scale(fire[0], (scale, scale)))
+
+        def __init__(self, pos, d_x, d_y):
+            super().__init__(all_sprites)
+            self.image = random.choice(self.fire)
+            self.rect = self.image.get_rect()
+            # у каждой частицы своя скорость - это вектор
+            if d_x > 0:
+                d_x = abs(d_x)
+            self.velocity = [d_x, d_y]
+            # и свои координаты
+            self.rect.x, self.rect.y = pos
+            # гравитация будет одинаковой
+            self.gravity = gravity
+
+        def update(self):
+            # применяем гравитационный эффект:
+            # движение с ускорением под действием гравитации
+            self.velocity[1] += self.gravity
+            # перемещаем частицу
+            self.rect.x += self.velocity[0]
+            self.rect.y += self.velocity[1]
+            # убиваем, если частица ушла за экран
+            if not self.rect.colliderect(screen_rect):
+                self.kill()
+
+    def create_particles(position):
+        # количество создаваемых частиц
+        particle_count = random.randint(20, 30)
+        # возможные скорости
+        numbers = range(-5, 6)
+        for _ in range(particle_count):
+            Particle(position, random.choice(numbers), random.choice(numbers))
     # set mode
     if send == '1 на 1':
         level = 11
@@ -176,6 +220,7 @@ def pong(send):
     pygame.init()
     sc = pygame.display.set_mode((width, height))
     clock = pygame.time.Clock()
+    gravity = 0.25
     # stats
     col1 = 0
     col2 = 0
@@ -193,8 +238,10 @@ def pong(send):
         img = pygame.image.load('fon4.jpg').convert()
     else:
         img = pygame.image.load('fon.jpg').convert()
+    screen_rect = (0, 0, width + 100, height)
     start_ticks = pygame.time.get_ticks()  # starter tick
     # sound and music
+    all_sprites = pygame.sprite.Group()
     sound_collision = pygame.mixer.Sound("collision.wav")
     sound_loose = pygame.mixer.Sound("loose.wav")
     sound_win = pygame.mixer.Sound("win.mp3")
@@ -233,6 +280,7 @@ def pong(send):
             if ball.centerx < ball_radius or ball.centerx > width:
                 dx = -dx
                 sound_collision_wall.play()
+                create_particles(ball.center)
             # collision top
             if ball.colliderect(paddle1) and dy < 800:
                 dx, dy = detect_collision(dx, dy, ball, paddle1)
@@ -390,6 +438,8 @@ def pong(send):
             text_rect_obj = text_surface_obj.get_rect()
             text_rect_obj.center = (660, 780)
             sc.blit(text_surface_obj, text_rect_obj)
+        all_sprites.draw(sc)
+        all_sprites.update()
         pygame.display.flip()
         clock.tick(fps)
 
