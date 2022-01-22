@@ -1032,6 +1032,7 @@ def tetris():
         if game.state == "gameover":
             window.blit(text_game_over1, [220, 220])
             window.blit(text_game_over2, [220, 275])
+            break
         pygame.display.flip()
         clock.tick(fps)
 
